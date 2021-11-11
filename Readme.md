@@ -1,5 +1,4 @@
-DOWNLOAD WITH PIP TOOL 
-
+Download with pip tool :
 
 -pyshark
 
@@ -7,8 +6,7 @@ DOWNLOAD WITH PIP TOOL
 -requests
 
 
-
-SET PATH VARIABLE (for pcap and xls files) : 
+Set path variable (for pcap and xls files) : 
 
 
 functions.py -----> Line 71
