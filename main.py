@@ -163,7 +163,7 @@ elif test_name=="MME_NODAL_8-OMEC":
     print(json_data_out)
 
 
-else:
+elif test_name=="MME_NODAL_5GNSA_3x":
     print("For NSA")
 
     json_data_out={}
@@ -199,3 +199,5 @@ else:
     json_data_out["5G-NSA Dual connectivity 3x option"] = True if not not records else False
 
     print(json_data_out)
+else :
+    print("others")
