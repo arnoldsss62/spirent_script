@@ -52,7 +52,7 @@ elif test_name=="MME_NODAL_2-OMEC":
     ##PCAP processing
     pcap_file='test_%s.pcap' %test_name
 
-    cap=pyshark.FileCapture(r'%s\\%s' %(file_path,pcap_file),display_filter='s1ap')
+    cap=pyshark.FileCapture('%s/%s' %(file_path,pcap_file),display_filter='s1ap')
     records=[]
     for packet in cap:
         if 'Attach request' in str(packet) and 'Type of identity: GUTI' in str(packet):
@@ -96,7 +96,7 @@ elif test_name=="MME_NODAL_5-OMEC":
     ##PCAP processing
     pcap_file='test_%s.pcap' %test_name
 
-    cap=pyshark.FileCapture(r'%s\\%s' %(file_path,pcap_file),display_filter='s1ap')
+    cap=pyshark.FileCapture('%s/%s' %(file_path,pcap_file),display_filter='s1ap')
     records=[]
     for packet in cap:
         if 'Detach request' in str(packet) and 'Switch off: Normal detach' in str(packet):
@@ -123,7 +123,7 @@ elif test_name=="MME_NODAL_6-OMEC":
     ##PCAP processing
     pcap_file='test_%s.pcap' %test_name
 
-    cap=pyshark.FileCapture(r'%s\\%s' %(file_path,pcap_file),display_filter='s1ap')
+    cap=pyshark.FileCapture('%s/%s' %(file_path,pcap_file),display_filter='s1ap')
     records=[]
     for packet in cap:
         if 'Detach request' in str(packet) and 'Switch off: Switch off' in str(packet):
@@ -177,7 +177,7 @@ elif test_name=="MME_NODAL_5GNSA_3x":
     name=test_name
     pcap_file='test_%s.pcap' %name
 
-    cap=pyshark.FileCapture(r'%s\\%s' %(file_path,pcap_file),display_filter='s1ap')
+    cap=pyshark.FileCapture('%s/%s' %(file_path,pcap_file),display_filter='s1ap')
     records=[]
     validation=False
     for packet in cap:
