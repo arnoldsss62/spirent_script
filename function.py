@@ -70,15 +70,15 @@ def download_file(end_2,name):
     auth_data=HTTPBasicAuth('sms', 'a1b2c3d4')
 
     #####COMPLETE SPECIFIC PATH OF XLS AND PCAP FILES
-    file_path=r"C:\Users\arnol\Documents\INFO\Trabajo\TIP_5G\api_script"
+    file_path="/home/arnold/trabajo/spirent_script"
 
     receive = requests.get(end_2[1], auth=auth_data ) # First (0) for log and (1) for xls file
-    with open(r'%s\\test_%s.xls' %(file_path,name),'wb') as f:
+    with open('%s/test_%s.xls' %(file_path,name),'wb') as f:
         f.write(receive.content)
 
     if len(end_2)==3:
         receive = requests.get(end_2[2], auth=auth_data ) # First (0) for log and (1) for xls file
-        with open(r'%s\\test_%s.pcap' %(file_path,name),'wb') as f:
+        with open('%s/test_%s.pcap' %(file_path,name),'wb') as f:
             f.write(receive.content)
 
     return file_path

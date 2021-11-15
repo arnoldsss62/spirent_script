@@ -1,3 +1,7 @@
+Download in linux:
+
+#apt install tshark
+
 Download with pip tool :
 
 -pyshark

@@ -25,7 +25,7 @@ if test_name=="MME_NODAL_1-OMEC":
     name=test_name
     pcap_file='test_%s.pcap' %name
 
-    cap=pyshark.FileCapture(r'%s\\%s' %(file_path,pcap_file),display_filter='s1ap')
+    cap=pyshark.FileCapture('%s/%s' %(file_path,pcap_file),display_filter='s1ap')
     records=[]
     for packet in cap:
         if 'Attach request' in str(packet) and 'Type of identity: IMSI' in str(packet):
