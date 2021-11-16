@@ -4,7 +4,7 @@ import pyshark
 import json
 import time
 import os
-def connection_general(test_name):
+def connection_general(test_name,test_path):
 
     endpoint="http://10.95.208.85:8080/api/"
     end_running="http://10.95.208.85:8080/api/runningTests/"
@@ -48,7 +48,7 @@ def connection_general(test_name):
 
     end_2 = get_response.json()["resultFilesList"]
 
-    file_path=download_file(end_2,test_name)
+    file_path=download_file(end_2,test_name,test_path)
 
     test_measurmnt=get_response.json()["measurementsUrl"]
     #print(test_measurmnt)
@@ -65,12 +65,12 @@ def close_connection(test_end):
     time.sleep(5)
     del_response=requests.delete(test_end,auth=auth_data)
 
-def download_file(end_2,name):
+def download_file(end_2,name,test_path):
 
     auth_data=HTTPBasicAuth('sms', 'a1b2c3d4')
 
     #####COMPLETE SPECIFIC PATH OF XLS AND PCAP FILES
-    file_path="/home/arnold/trabajo/spirent_script"
+    file_path=test_path
 
     receive = requests.get(end_2[1], auth=auth_data ) # First (0) for log and (1) for xls file
     with open('%s/test_%s.xls' %(file_path,name),'wb') as f:

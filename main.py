@@ -6,8 +6,10 @@ from function import connection_general
 import re
 
 test_name=sys.argv[1]
+test_path= sys.argv[2]
 
-id,get_response,file_path = connection_general(test_name)
+id,get_response,file_path = connection_general(test_name,test_path)
+file_path=test_path
 
 if test_name=="MME_NODAL_1-OMEC":
     json_data_out={}
