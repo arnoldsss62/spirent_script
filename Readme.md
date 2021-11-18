@@ -6,8 +6,7 @@ Download with pip tool :
 
 -pyshark
 
--pandas
--xlrd
+
 
 -requests
 
