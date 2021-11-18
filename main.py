@@ -72,6 +72,12 @@ elif test_name=="MME_NODAL_3-OMEC":
 
     json_data_out={}
     ##Data thoughput test
+    excel_file='test_%s.xls' %name
+
+    file=pd.read_excel('%s/%s' %(file_path,excel_file),sheet_name='External Apps|SpeedTest Lab')
+    last=len(file)-1
+    json_data_out("Data throughput test")=True if file["Speed Test Lab Down Speed (Mbps)"][last] > 0 and file["Speed Test Lab Up Speed (Mbps)"][last] > 0 else False
+
     print(json_data_out)   
 
 elif test_name=="MME_NODAL_4-OMEC":
@@ -93,7 +99,7 @@ elif test_name=="MME_NODAL_5-OMEC":
     ESM =get_response.json()["tabs"]["ESM"]
     SCTP =get_response.json()["tabs"]["SCTP"]
 
-    json_data_out["Successful EPS Detach initiated by UE"]= True if float(EMM["Detach Requests Sent"]) == float(EMM["Detach Responses"])  else False
+    json_data_out["Successful EPS Detach initiated by UE"]= True if float(EMM["Detach Requests Sent"]) == float(EMM["Detach Responses Received"])  else False
 
     ##PCAP processing
     pcap_file='test_%s.pcap' %test_name
@@ -120,7 +126,7 @@ elif test_name=="MME_NODAL_6-OMEC":
     EMM=get_response.json()["tabs"]["EMM"]
     ESM =get_response.json()["tabs"]["ESM"]
 
-    json_data_out["Successful EPS Detach initiated by UE due to switch off"]=True if EMM["Detach Requests Sent"] == EMM["Detach Responses"]  else False
+    json_data_out["Successful EPS Detach initiated by UE due to switch off"]=True if float(EMM["Detach Requests Sent"]) == float(EMM["Detach Responses Received"])  else False
 
     ##PCAP processing
     pcap_file='test_%s.pcap' %test_name
@@ -164,6 +170,17 @@ elif test_name=="MME_NODAL_8-OMEC":
 
     print(json_data_out)
 
+elif test_name=="MME_NODAL_10-OMEC":
+
+    json_data_out={}
+    S1=get_response.json()["tabs"]["S1-AP"]
+    ESM =get_response.json()["tabs"]["ESM"]
+    SCTP =get_response.json()["tabs"]["SCTP"]
+
+    json_data_out["UE/eNB Context Release due to User Inactivity with a single bearer established"]=True if float(S1["S1 Release Completes"])/float(S1["S1 Release Requests"]) >=0.99 else False
+    json_data_out["Successful Service Request invoked when the UE has uplink signaling pending in ECM-Idle mode (Single Bearer)"]=True if float(EMM["Service Requests - UE Triggered"])/float(S1["Service Accepts - UE Triggered"]) >=0.99 else False
+
+    print(json_data_out)
 
 elif test_name=="MME_NODAL_5GNSA_3x":
     print("For NSA")
@@ -180,26 +197,33 @@ elif test_name=="MME_NODAL_5GNSA_3x":
     pcap_file='test_%s.pcap' %name
 
     cap=pyshark.FileCapture('%s/%s' %(file_path,pcap_file),display_filter='s1ap')
-    records=[]
+    records=[[],[],[],[]]
     validation=False
     for packet in cap:
         if 'Attach request' in str(packet) and 'Dual connectivity with NR: Supported' in str(packet) and 'UE additional security capability' in str(packet):
             print("paquete valido")
-            records.append(packet)
+            records[0].append(packet)
         if 'Attach complete' in str(packet) and 'NAS EPS Mobility Management Message Type: Attach complete' in str(packet) :
             print("paquete valido")
-            records.append(packet)
+            records[1].append(packet)
         if 'E-RABConfirmationIndication' in str(packet)  :
             print("paquete valido")
-            records.append(packet)
+            records[2].append(packet)
+            match=re.search(r'e-RAB-ID: ([\d])',str(packet))
+            id_ind=match.group(1)
+
         if 'E-RABConfirmationConfirm' in str(packet)  :
             print("paquete valido")
-            records.append(packet)
+            records[3].append(packet)
+            match=re.search(r'e-RAB-ID: ([\d])',str(packet))
+            id_confirm=match.group(1)
+        
+        
     cap.close()
-    json_data_out["Successful EPS Attach with IMSI"]=True if len(records)>=2  and json_data_out["Successful EPS Attach with IMSI"] else False
+    json_data_out["5G-NSA Dual Connectivity Attach"]=True if len(records)>=2  and json_data_out["5G-NSA Dual Connectivity Attach"] else False
     #json_data_out["pcap"]= True if not not records else False
-    json_data_out["5G-NSA Dual connectivity 3x option"] = True if not not records else False
-
+    json_data_out["5G-NSA Dual connectivity 3x option"] = True if len(records[0])==len(records[1]) and len(records[2])==len(records[3]) and id_ind==id_confirm else False
+    json_data_out["5G NSA Dual Connectivity Service Request procedure"] =True if float(EMM["Service Requests - UE Triggered"])/float(S1["Service Accepts - UE Triggered"]) >=0.99 else False
     print(json_data_out)
 else :
     print("others")
