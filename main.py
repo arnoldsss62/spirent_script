@@ -31,10 +31,10 @@ if test_name=="MME_NODAL_1-OMEC":
     records=[]
     for packet in cap:
         if 'Attach request' in str(packet) and 'Type of identity: IMSI' in str(packet):
-            print("paquete valido")
+            print("valid packet")
             records.append(packet)
         if 'Attach complete' in str(packet) and 'NAS EPS Mobility Management Message Type: Attach complete' in str(packet) :
-            print("paquete valido")
+            print("valid packet")
             records.append(packet)
     cap.close()
     json_data_out["Successful EPS Attach with IMSI"]=True if len(records)>=2  and json_data_out["Successful EPS Attach with IMSI"] else False
@@ -58,10 +58,10 @@ elif test_name=="MME_NODAL_2-OMEC":
     records=[]
     for packet in cap:
         if 'Attach request' in str(packet) and 'Type of identity: GUTI' in str(packet):
-            print("paquete valido")
+            print("valid packet")
             records.append(packet)
         if 'Attach complete' in str(packet) and 'NAS EPS Mobility Management Message Type: Attach complete' in str(packet) :
-            print("paquete valido")
+            print("valid packet")
             records.append(packet)
     cap.close()
     json_data_out["Successful EPS Attach with UE known in MME and Ciphering"]= True if len(records)>=2  and json_data_out["Successful EPS Attach with UE known in MME and Ciphering"] else False 
@@ -107,10 +107,10 @@ elif test_name=="MME_NODAL_5-OMEC":
     records=[]
     for packet in cap:
         if 'Detach request' in str(packet) and 'Switch off: Normal detach' in str(packet):
-            print("paquete valido")
+            print("valid packet")
             records.append(packet)
         if 'Detach accept' in str(packet) and 'NAS EPS Mobility Management Message Type: Dettach accept' in str(packet):
-            print("paquete valido")
+            print("valid packet")
             records.append(packet)
     cap.close()
 
@@ -134,10 +134,10 @@ elif test_name=="MME_NODAL_6-OMEC":
     records=[]
     for packet in cap:
         if 'Detach request' in str(packet) and 'Switch off: Switch off' in str(packet):
-            print("paquete valido")
+            print("valid packet")
             records.append(packet)
         if 'Detach accept' in str(packet) and 'NAS EPS Mobility Management Message Type: Dettach accept' in str(packet):
-            print("paquete valido")
+            print("valid packet")
             records.append(packet)
     cap.close()
     json_data_out["Successful EPS Detach initiated by UE due to switch off"]= True if len(records)>=2 and json_data_out["Successful EPS Detach initiated by UE due to switch off"] else False
@@ -172,12 +172,13 @@ elif test_name=="MME_NODAL_8-OMEC":
 elif test_name=="MME_NODAL_10-OMEC":
 
     json_data_out={}
+    EMM=get_response.json()["tabs"]["EMM"]
     S1=get_response.json()["tabs"]["S1-AP"]
     ESM =get_response.json()["tabs"]["ESM"]
     SCTP =get_response.json()["tabs"]["SCTP"]
 
     json_data_out["UE/eNB Context Release due to User Inactivity with a single bearer established"]=True if float(S1["S1 Release Completes"])/float(S1["S1 Release Requests"]) >=0.99 else False
-    json_data_out["Successful Service Request invoked when the UE has uplink signaling pending in ECM-Idle mode (Single Bearer)"]=True if float(EMM["Service Requests - UE Triggered"])/float(S1["Service Accepts - UE Triggered"]) >=0.99 else False
+    json_data_out["Successful Service Request invoked when the UE has uplink signaling pending in ECM-Idle mode (Single Bearer)"]=True if float(EMM["Service Requests - UE Triggered"])/float(EMM["Service Accepts - UE Triggered"]) >=0.99 else False
     json_data_out["id"]=id
     print(json_data_out)
 
@@ -198,21 +199,23 @@ elif test_name=="MME_NODAL_5GNSA_3x":
     cap=pyshark.FileCapture('%s/%s' %(file_path,pcap_file),display_filter='s1ap')
     records=[[],[],[],[]]
     validation=False
+    id_confirm=0
+    id_ind=0
     for packet in cap:
         if 'Attach request' in str(packet) and 'Dual connectivity with NR: Supported' in str(packet) and 'UE additional security capability' in str(packet):
-            print("paquete valido")
+            print("valid packet")
             records[0].append(packet)
         if 'Attach complete' in str(packet) and 'NAS EPS Mobility Management Message Type: Attach complete' in str(packet) :
-            print("paquete valido")
+            print("valid packet")
             records[1].append(packet)
         if 'E-RABConfirmationIndication' in str(packet)  :
-            print("paquete valido")
+            print("valid packet")
             records[2].append(packet)
             match=re.search(r'e-RAB-ID: ([\d])',str(packet))
             id_ind=match.group(1)
 
         if 'E-RABConfirmationConfirm' in str(packet)  :
-            print("paquete valido")
+            print("valid packet")
             records[3].append(packet)
             match=re.search(r'e-RAB-ID: ([\d])',str(packet))
             id_confirm=match.group(1)
@@ -222,7 +225,7 @@ elif test_name=="MME_NODAL_5GNSA_3x":
     json_data_out["5G-NSA Dual Connectivity Attach"]=True if len(records)>=2  and json_data_out["5G-NSA Dual Connectivity Attach"] else False
     #json_data_out["pcap"]= True if not not records else False
     json_data_out["5G-NSA Dual connectivity 3x option"] = True if len(records[0])==len(records[1]) and len(records[2])==len(records[3]) and id_ind==id_confirm else False
-    json_data_out["5G NSA Dual Connectivity Service Request procedure"] =True if float(EMM["Service Requests - UE Triggered"])/float(S1["Service Accepts - UE Triggered"]) >=0.99 else False
+    json_data_out["5G NSA Dual Connectivity Service Request procedure"] =True if float(EMM["Service Requests - UE Triggered"])/float(EMM["Service Accepts - UE Triggered"]) >=0.99 else False
     json_data_out["id"]=id
     print(json_data_out)
 

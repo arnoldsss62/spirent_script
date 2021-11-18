@@ -37,11 +37,11 @@ def connection_general(test_name,test_path):
                 break
             else:
                 time.sleep(10)
-                print("Esperando que test se realice")
+                print("Waiting for test ...")
                 get_response = requests.get(test_end, auth=auth_data )
         else:
                 time.sleep(10)
-                print("Esperando que test se realice")
+                print("Waiting for test ...")
                 #print(get_response.json().keys())
                 get_response = requests.get(test_end, auth=auth_data )   
 
