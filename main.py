@@ -16,12 +16,13 @@ if test_name=="MME_NODAL_1-OMEC":
     EMM=get_response.json()["tabs"]["EMM"]
     ESM =get_response.json()["tabs"]["ESM"]
     SCTP =get_response.json()["tabs"]["SCTP"]
+    enodeB= get_response.json()["tabs"]["eNodeB User Node"]
     json_data_out["SCTP Link"]= True if int(SCTP["Socket Connect Count"]) == 1 else False
     json_data_out["S1 Setup"]=True if float(get_response.json()["tabs"]["S1-AP"]["Setup Responses Received"])/float(get_response.json()["tabs"]["S1-AP"]["Setup Requests Sent"]) >=0.99 else False
     json_data_out["UE EPC attachment"]=True if float(EMM["Attach Accepts"])/float(EMM["Attach Requests"]) >=0.98 else False
     json_data_out["UE initiated EPC detachment"]=True if EMM["Detach Requests"] == EMM["Detach Responses"]  else False
     json_data_out["Successful EPS Attach with IMSI"]=True if float(EMM["Attach Accepts"])/float(EMM["Attach Requests"]) >=0.99 and float(EMM["Auth Responses"])/float(EMM["Auth Requests"]) >=0.99 and float(EMM["Security Mode Completes"])/float(EMM["Security Mode"]) >= 0.99 and float(ESM["Activate Context Accepts"])/float(ESM["Activate Context Requests"]) >= 0.99 else False
-    #json_data_out["GTP-U echo mechanism"]= True  ##Consultar con Luis 
+    json_data_out["GTP-U echo mechanism"]= True if float(enodeB["Echo Requests Sent"])/float(enodeB["Echo Responses Received"]) >=0.99 else False
 
     ##PCAP processing
     name=test_name
