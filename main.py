@@ -76,7 +76,7 @@ elif test_name=="MME_NODAL_3-OMEC":
     ##Data thoughput test
 
     speed=get_response.json()["tabs"]["External Apps|SpeedTest Lab"]
-    json_data_out["Data throughput test"]=True if float(speed["Speed Test Lab Down Speed (Mbps)"]) > 0 and float(speed["Speed Test Lab Up Speed (Mbps)"]) > 0 else False
+    json_data_out["Data throughput test"]=True if float(speed["Speed Test Lab Down Speed (Mbps)"].replace(",","")) > 0 and float(speed["Speed Test Lab Up Speed (Mbps)"].replace(",","")) > 0 else False
     json_data_out["id"]=id
     print(json_data_out)   
 
